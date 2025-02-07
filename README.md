@@ -6,4 +6,7 @@
 - go to project properties-> project facets-> select tomcat in runtime.
 - build the project using : mvn clean install.
 - to run project : Run On Server.
-
+# docker image run
+- docker build -t apartment-building-app .
+- docker run -p 8080:8080 apartment-building-app
+- http://localhost:8080/
