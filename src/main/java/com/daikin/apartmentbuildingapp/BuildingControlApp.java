@@ -40,7 +40,7 @@ public class BuildingControlApp extends HttpServlet {
 		scheduler.scheduleAtFixedRate(() -> {
 			building.reCalculateTemprature();
 			context.setAttribute("building", building);
-		}, 0, 1, TimeUnit.MINUTES);
+		}, 0, 5, TimeUnit.MINUTES);
 	}
 
 	// This method will handle all GET requests, coming from client. 
