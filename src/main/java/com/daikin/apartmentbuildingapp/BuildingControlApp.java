@@ -22,15 +22,28 @@ import com.daikin.apartmentbuildingapp.model.enums.CommonRoomType;
  * 
  * @author Sagar Dixir
  *
- *         This is a web Servlet, used to handle all client request, coming to
- *         server.
+ *This is a web Servlet, used to handle all client request, coming to server.
  */
 @WebServlet
 public class BuildingControlApp extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Building building = new Building();
+	private ScheduledExecutorService scheduler;
 
-	// This method will handle all GET requests, coming from client.
+	// this is a Scheduler which re calculate temprature in every 5 minutes.
+	@Override
+	public void init() throws ServletException {
+		super.init();
+		scheduler = Executors.newScheduledThreadPool(1);
+		ServletContext context = getServletContext();
+
+		scheduler.scheduleAtFixedRate(() -> {
+			building.reCalculateTemprature();
+			context.setAttribute("building", building);
+		}, 0, 5, TimeUnit.MINUTES);
+	}
+
+	// This method will handle all GET requests, coming from client. 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		request.setAttribute("building", building);
@@ -38,7 +51,7 @@ public class BuildingControlApp extends HttpServlet {
 		dispacher.forward(request, response);
 	}
 
-	// This method will handle all POST requests, coming from client.
+	// This method will handle all POST requests, coming from client. 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		if (request.getParameter("changeTemprature") != null) {
@@ -67,6 +80,14 @@ public class BuildingControlApp extends HttpServlet {
 
 			RequestDispatcher dispacher = request.getRequestDispatcher("/index.jsp");
 			dispacher.forward(request, response);
+		}
+	}
+
+	// This method will shutdown executor service after completion the task.
+	@Override
+	public void destroy() {
+		if (scheduler != null) {
+			scheduler.shutdown();
 		}
 	}
 

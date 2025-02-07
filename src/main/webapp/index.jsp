@@ -76,7 +76,11 @@ Building building = null;
 				<%
 				if (request.getAttribute("building") != null) {
 					building = (Building) request.getAttribute("building");
-				for (Room room : building.getRooms()) {
+				} else if (application.getAttribute("building") != null) {
+					building = (Building) application.getAttribute("building");
+				}
+				if (building != null) {
+					for (Room room : building.getRooms()) {
 				%>
 				<li><%=room%></li>
 				<%
